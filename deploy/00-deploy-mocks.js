@@ -8,10 +8,9 @@ const {
 module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deploy, log } = deployments;
     const { deployer } = await getNamedAccounts();
-    const chainId = network.config.chainId;
 
     // Deploy if developmentChains includes the current network
-    if (chainId == 31337) {
+    if (developmentChains.includes(network.name)) {
         log("Local network detected! Deploying mocks...");
         await deploy("MockV3Aggregator", {
             contract: "MockV3Aggregator",
