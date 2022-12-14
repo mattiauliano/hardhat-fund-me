@@ -17,7 +17,9 @@ module.exports = {
         goerli: {
             url: GOERLI_RPC_URL,
             accounts: [PRIVATE_KEY],
-            chainId: 5
+            chainId: 5,
+            // Specifying how many confirmations block want to wait
+            blockConfirmations: 6
         }
     },
     gasReporter: {
