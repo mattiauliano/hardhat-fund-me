@@ -4,6 +4,8 @@ const {
     developmentChains
 } = require("../helper-hardhat-config");
 const { network } = require("hardhat");
+// Get access to verify function
+const { verify } = require("../utils/verify");
 
 // Parameter passed in this async function is 'hre' (hardhat)
 // Destructuring 'hre' to get 'getNamedAccounts' and 'deployments' object
@@ -28,15 +30,25 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         ethUsdPriceFeedAddress = networkConfig[chainId]["ethUsdPriceFeed"];
     }
 
+    const args = [ethUsdPriceFeedAddress];
     // Deploying FundMe contract
     const fundMe = await deploy("FundMe", {
         // Named account
         from: deployer,
         // Constructor args (price feed address)
-        args: [ethUsdPriceFeedAddress],
+        args: args,
         // Log transaction
         log: true
     });
+
+    // If the current network isn't a local net verify the contract
+    if (
+        !developmentChains.includes(network.name) &&
+        process.env.ETHERSCAN_API_KEY
+    ) {
+        await verify(fundMe.address, args);
+    }
+
     log("----------------------------------------------------");
 };
 
