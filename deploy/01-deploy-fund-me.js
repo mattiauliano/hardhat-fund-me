@@ -1,5 +1,9 @@
 // Get access to helper (handling multiple networks and addresses)
-const { networkConfig } = require("../helper-hardhat-config");
+const {
+    networkConfig,
+    developmentChains
+} = require("../helper-hardhat-config");
+const { network } = require("hardhat");
 
 // Parameter passed in this async function is 'hre' (hardhat)
 // Destructuring 'hre' to get 'getNamedAccounts' and 'deployments' object
@@ -11,18 +15,29 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deployer } = await getNamedAccounts();
     // Taking chainId for network conditionals
     const chainId = network.config.chainId;
+    // Price feed address
+    let ethUsdPriceFeedAddress;
 
-    // Use networkConfig and chainId to handle addresses
-    const ethUsdPriceFeedAddress = networkConfig[chainId]["ethUsdPriceFeed"];
-    const btcUsdPriceFeedAddress = networkConfig[chainId]["btcUsdPriceFeed"];
+    // If network is a local test network
+    if (developmentChains.includes(network.name)) {
+        // Use mock to get fake data to use in our FundMe contract
+        const ethUsdAggregator = await deployments.get("MockV3Aggregator");
+        ethUsdPriceFeedAddress = ethUsdAggregator.address;
+    } else {
+        // Use networkConfig and chainId to handle addresses
+        ethUsdPriceFeedAddress = networkConfig[chainId]["ethUsdPrice"];
+    }
 
-    // Actually deploy FundMe contract
+    // Deploying FundMe contract
     const fundMe = await deploy("FundMe", {
         // Named account
         from: deployer,
         // Constructor args (price feed address)
         args: [ethUsdPriceFeedAddress],
         // Log transaction
-        log: true,
-    })
+        log: true
+    });
+    log("----------------------------------------------------");
 };
+
+module.exports.tags = ["all", "fundme"];
