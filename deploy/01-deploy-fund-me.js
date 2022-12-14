@@ -25,7 +25,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         ethUsdPriceFeedAddress = ethUsdAggregator.address;
     } else {
         // Use networkConfig and chainId to handle addresses
-        ethUsdPriceFeedAddress = networkConfig[chainId]["ethUsdPrice"];
+        ethUsdPriceFeedAddress = networkConfig[chainId]["ethUsdPriceFeed"];
     }
 
     // Deploying FundMe contract
