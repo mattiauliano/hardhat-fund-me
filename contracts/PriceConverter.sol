@@ -1,15 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.8;
 
-// Importing from GitHub Chainlink interface to get price from an api
+// Importing from GitHub Chainlink interface(abi) (chainlink/contracts package)
+// Matched with address gives you the ability to interact with contract
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 library PriceConverter {
-    function getPrice() internal view returns (uint256) {
-        // Address and ABI needed to interact with Chainlink Smart Contract
-        AggregatorV3Interface priceFeed = AggregatorV3Interface(
-            0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e
-        );
+    function getPrice(
+        AggregatorV3Interface priceFeed
+    ) internal view returns (uint256) {
         // Get price of ETH in USD
         (, int256 price, , , ) = priceFeed.latestRoundData();
         // 1000.00000000
@@ -21,10 +20,11 @@ library PriceConverter {
     }
 
     function getConversionRate(
-        uint256 ethAmount
+        uint256 ethAmount,
+        AggregatorV3Interface priceFeed
     ) internal view returns (uint256) {
         // Convert msg.value from ETH in USD
-        uint256 ethPrice = getPrice();
+        uint256 ethPrice = getPrice(priceFeed);
         // 3000_000000000000000000 = ETH / USD price
         // 1_000000000000000000 ETH
 

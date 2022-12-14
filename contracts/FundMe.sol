@@ -8,14 +8,18 @@ import "./PriceConverter.sol";
 error NotOwner();
 
 contract FundMe {
-    // Specify the usage for PriceConverter
+    // Specify the usage for PriceConverter | library --> uint256
     using PriceConverter for uint256;
     // Who deploy the contract
     address public immutable i_owner;
 
+    AggregatorV3Interface public priceFeed;
+
     // A function that runs whenever the contract gets deployed
-    constructor() {
+    // Parameterize priceFeedAddress
+    constructor(address priceFeedAddress) {
         i_owner = msg.sender;
+        priceFeed = AggregatorV3Interface(priceFeedAddress);
     }
 
     uint256 public constant MINIMUM_USD = 10 * 1e18;
@@ -28,7 +32,7 @@ contract FundMe {
         // Gets funds from users
         // Set a minimum funding value in USD
         require(
-            msg.value.getConversionRate() >= MINIMUM_USD,
+            msg.value.getConversionRate(priceFeed) >= MINIMUM_USD,
             "Send at least 10$!"
         );
         // Add sender's address
