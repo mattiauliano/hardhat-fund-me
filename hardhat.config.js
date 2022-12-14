@@ -3,8 +3,10 @@ require("@nomicfoundation/hardhat-toolbox");
 require("hardhat-deploy");
 require("dotenv").config();
 
-const PRIVATE_KEY = process.env.PRIVATE_KEY;
-const GOERLI_RPC_URL = process.env.GOERLI_RPC_URL;
+const GOERLI_RPC_URL = process.env.GOERLI_RPC_URL || "https://eth-goerli";
+const PRIVATE_KEY = process.env.PRIVATE_KEY || "0xkey";
+const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "key";
+const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY || "key";
 
 module.exports = {
     // Adding multiple solidity compiler versions
@@ -23,7 +25,7 @@ module.exports = {
         currency: "USD"
     },
     etherscan: {
-        apiKey: process.env.ETHERSCAN_API_KEY
+        apiKey: ETHERSCAN_API_KEY
     },
     // getNamedAccounts function returns:
     namedAccounts: {
