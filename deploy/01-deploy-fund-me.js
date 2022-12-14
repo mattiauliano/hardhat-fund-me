@@ -38,7 +38,9 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         // Constructor args (price feed address)
         args: args,
         // Log transaction
-        log: true
+        log: true,
+        // Block confirmations to wait
+        waitConfirmations: network.config.blockConfirmations || 1
     });
 
     // If the current network isn't a local net verify the contract
