@@ -18,6 +18,7 @@
     "typechain": "^8.1.0"
   },
   "dependencies": {
+    "dotenv": "^16.0.3",
     "hardhat-deploy": "^0.11.22",
     "solhint": "^3.3.7"
   }
