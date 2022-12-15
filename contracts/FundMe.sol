@@ -20,7 +20,7 @@ contract FundMe {
     // Funders dynamic list
     address[] public funders;
     // Associate address and funds
-    mapping(address => uint256) public AddressToAmountFunds;
+    mapping(address => uint256) public addressToAmountFunds;
 
     uint256 public constant MINIMUM_USD = 10 * 1e18;
 
@@ -62,14 +62,14 @@ contract FundMe {
         // Add sender's address
         funders.push(msg.sender);
         // Adding funds to actually sender
-        AddressToAmountFunds[msg.sender] += msg.value;
+        addressToAmountFunds[msg.sender] += msg.value;
     }
 
     function withdraw() public OnlyOwner {
         // Reset all addresses funds with a for loop
         for (uint256 index = 0; index < funders.length; index++) {
             address funder = funders[index];
-            AddressToAmountFunds[funder] = 0;
+            addressToAmountFunds[funder] = 0;
         }
 
         // Reset funders array
