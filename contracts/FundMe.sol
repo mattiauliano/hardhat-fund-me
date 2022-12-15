@@ -7,11 +7,22 @@ import "./PriceConverter.sol";
 // Creating a costum error
 error NotOwner();
 
+/// @title A contract for crowd funding
+/// @author Mattia Uliano
+/// @notice This contract is to demo a sample funding contract
+/// @dev This implements price feeds as our library
+
 contract FundMe {
     // Specify the usage for PriceConverter | library --> uint256
     using PriceConverter for uint256;
     // Who deploy the contract
     address public immutable i_owner;
+    // Funders dynamic list
+    address[] public funders;
+    // Associate address and funds
+    mapping(address => uint256) public AddressToAmountFunds;
+
+    uint256 public constant MINIMUM_USD = 10 * 1e18;
 
     AggregatorV3Interface public priceFeed;
 
@@ -22,11 +33,24 @@ contract FundMe {
         priceFeed = AggregatorV3Interface(priceFeedAddress);
     }
 
-    uint256 public constant MINIMUM_USD = 10 * 1e18;
-    // Funders dynamic list
-    address[] public funders;
-    // Associate address and funds
-    mapping(address => uint256) public AddressToAmountFunds;
+    // Receive external payments
+    receive() external payable {
+        fund();
+    }
+
+    // Calls a function that doesn't exist
+    fallback() external payable {
+        fund();
+    }
+
+    // Modifier to add permission at contract's owner
+    modifier OnlyOwner() {
+        // This is an example of custom error to save gas
+        if (i_owner != msg.sender) {
+            revert NotOwner();
+        }
+        _; // All the function code will execute after the require
+    }
 
     function fund() public payable {
         // Gets funds from users
@@ -57,24 +81,5 @@ contract FundMe {
         }("");
         require(callSuccess, "Call failed!");
         // Call returns two things, we have no interest in data in this case. Leave a comma.
-    }
-
-    // Modifier to add permission at contract's owner
-    modifier OnlyOwner() {
-        // This is an example of custom error to save gas
-        if (i_owner != msg.sender) {
-            revert NotOwner();
-        }
-        _; // All the function code will execute after the require
-    }
-
-    // Receive external payments
-    receive() external payable {
-        fund();
-    }
-
-    // Calls a function that doesn't exist
-    fallback() external payable {
-        fund();
     }
 }
