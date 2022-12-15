@@ -51,4 +51,44 @@ describe("FundMe", () => {
             assert.equal(pushedFunder, deployer);
         });
     });
+
+    // Test withdraw function
+    describe("withdraw", () => {
+        // Add ETH to FundMe contract
+        beforeEach(async () => {
+            await fundMe.fund({ value: sendValue });
+        });
+        it("Withdraw ETH from contract to deployer", async () => {
+            // Arrange
+            const initialContractBalance = await ethers.provider.getBalance(
+                fundMe.address
+            );
+            const initialDeployerBalance = await ethers.provider.getBalance(
+                deployer
+            );
+
+            // Act
+            const response = await fundMe.withdraw();
+            const transactionReceipt = await response.wait(1);
+            // Get the gas cost
+            const { gasUsed, effectiveGasPrice } = transactionReceipt;
+            // Multiply to get gasCost
+            const gasCost = gasUsed.mul(effectiveGasPrice);
+
+            const endingContractBalance = await ethers.provider.getBalance(
+                fundMe.address
+            );
+            const endingDeployerBalance = await ethers.provider.getBalance(
+                deployer
+            );
+
+            // Assert
+            assert.equal(endingContractBalance, 0);
+            // .add and .toString methods are used because of bigNumber type
+            assert.equal(
+                initialContractBalance.add(initialDeployerBalance).toString(),
+                endingDeployerBalance.add(gasCost).toString()
+            );
+        });
+    });
 });
