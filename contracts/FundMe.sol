@@ -26,6 +26,15 @@ contract FundMe {
 
     AggregatorV3Interface public priceFeed;
 
+    // Modifier to add permission at contract's owner
+    modifier OnlyOwner() {
+        // This is an example of custom error to save gas
+        if (i_owner != msg.sender) {
+            revert NotOwner();
+        }
+        _; // All the function code will execute after the require
+    }
+
     // A function that runs whenever the contract gets deployed
     // Parameterize priceFeedAddress
     constructor(address priceFeedAddress) {
@@ -41,15 +50,6 @@ contract FundMe {
     // Calls a function that doesn't exist
     fallback() external payable {
         fund();
-    }
-
-    // Modifier to add permission at contract's owner
-    modifier OnlyOwner() {
-        // This is an example of custom error to save gas
-        if (i_owner != msg.sender) {
-            revert NotOwner();
-        }
-        _; // All the function code will execute after the require
     }
 
     function fund() public payable {
