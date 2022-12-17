@@ -24,7 +24,7 @@ describe("FundMe", () => {
     // Test constructor function
     describe("constructor", () => {
         it("Sets the aggregator addresses correctly", async () => {
-            const response = await fundMe.priceFeed();
+            const response = await fundMe.getPriceFeed();
             assert.equal(response, mockV3Aggregator.address);
         });
     });
@@ -33,8 +33,9 @@ describe("FundMe", () => {
     describe("fund", () => {
         it("Fails if you don't send enough ETH", async () => {
             // Specific revert message from FundMe.sol
-            await expect(fundMe.fund()).to.be.revertedWith(
-                "Send at least 10$!"
+            await expect(fundMe.fund()).to.be.revertedWithCustomError(
+                fundMe,
+                "FundMe__NotEnoughMoney"
             );
         });
 
@@ -42,14 +43,14 @@ describe("FundMe", () => {
             // Fund 1ETH from deployer by default (to check)
             await fundMe.fund({ value: sendValue });
             // Get deployer's funds
-            const response = await fundMe.addressToAmountFunds(deployer);
+            const response = await fundMe.getAddressToAmountFunded(deployer);
             assert.equal(response.toString(), sendValue.toString());
         });
 
         it("Adds funder to array of funders", async () => {
             await fundMe.fund({ value: sendValue });
             // funders(0) === funders[0]
-            const pushedFunder = await fundMe.funders(0);
+            const pushedFunder = await fundMe.getFunder(0);
             assert.equal(pushedFunder, deployer);
         });
     });
@@ -134,11 +135,11 @@ describe("FundMe", () => {
             );
 
             // Make sure that funders reset properly
-            await expect(fundMe.funders(0)).to.be.reverted;
+            await expect(fundMe.getFunder(0)).to.be.reverted;
 
             for (i = 1; i < 6; i++) {
                 assert.equal(
-                    await fundMe.addressToAmountFunds(accounts[i].address),
+                    await fundMe.getAddressToAmountFunded(accounts[i].address),
                     0
                 );
             }
