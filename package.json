@@ -21,5 +21,13 @@
     "dotenv": "^16.0.3",
     "hardhat-deploy": "^0.11.22",
     "solhint": "^3.3.7"
+  },
+  "scripts": {
+    "test": "hardhat test",
+    "test:staging": "hardhat test --network goerli",
+    "lint": "solhint 'contracts/**/*.sol'",
+    "lint:fix": "solhint 'contracts/**/*.sol' --fix",
+    "format": "prettier --write .",
+    "coverage": "hardhat coverage"
   }
 }
