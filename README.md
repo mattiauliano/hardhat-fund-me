@@ -13,6 +13,7 @@
   - [Verify on etherscan](#verify-on-etherscan)
 
 This project is apart of the Hardhat FreeCodeCamp video.
+https://www.youtube.com/watch?v=gyMwXuJrbJQ&ab_channel=freeCodeCamp.org
 
 # Getting Started
 
